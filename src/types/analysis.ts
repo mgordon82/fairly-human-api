@@ -1,10 +1,10 @@
 export interface FairlyHumanAnalysis {
   analysisSummary: string;
-  unfairnessScore: number; // 0–100
+  unfairnessScore: number;
   factors: {
     label: string;
     description: string;
-    weight: number; // 0–1
+    weight: number;
   }[];
   suggestions: string[];
   resourceLinks: {
