@@ -12,14 +12,41 @@ app.use(helmet());
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
+// 🔍 Simple request logger so we can see what hits the server
+app.use((req, _res, next) => {
+  console.log(`[REQ] ${req.method} ${req.path}`);
+  next();
+});
+
+// ✅ Root route (optional but helpful)
+app.get('/', (_req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'FairlyHuman API root. Try GET /api/health'
+  });
+});
+
+// ✅ Health route
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', message: 'FairlyHuman backend alive' });
 });
 
+// ✅ Analyze route protections
 app.use('/api/stories/analyze', analyzeLimiter, analyzeFailsafe);
 
+// ✅ Main stories router
 app.use('/api/stories', storyRouter);
 
+// 🔍 404 handler for unknown routes
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Route not found',
+    path: req.path,
+    method: req.method
+  });
+});
+
+// 🔥 Error handler
 app.use(
   (
     err: any,
